@@ -29,6 +29,19 @@ public class CidadeService {
 		}
 	}
 	
+
+	@GET
+	@Path("/listar/ddd/{ddd}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Cidade> listarPorDdd(@PathParam("ddd") int ddd) {
+		try {
+			return new CidadeDAO().listarPorDdd(ddd);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/listar/{param}")

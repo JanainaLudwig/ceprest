@@ -59,7 +59,32 @@ public class CidadeDAO {
 		
 		return list;
 	}
-	
+
+	public List<Cidade> listarPorEstadoPopulacao(String sigla) throws SQLException{
+		PreparedStatement stmt = Conexao.getInstance().getConexao().prepareStatement(
+				"SELECT city.*, state.title AS stateTitle, state.letter " +
+				"FROM city INNER JOIN state ON state.id=city.id_state " +
+				"WHERE state.letter=? ORDER BY city.population desc");
+		stmt.setString(1, sigla);
+		ResultSet rs = stmt.executeQuery();
+		List<Cidade> list = new ArrayList<Cidade>();
+		
+		while(rs.next()){
+			Cidade e = new Cidade();
+			
+			e.setId(rs.getInt("id"));
+			e.setNome(rs.getString("title"));
+			e.setDdd(rs.getInt("iso_ddd"));
+			e.setPopulacao(rs.getInt("population"));
+			e.getEstado().setId(rs.getInt("id_state"));
+			e.getEstado().setNome(rs.getString("stateTitle"));
+			e.getEstado().setSigla(rs.getString("letter"));
+			
+			list.add(e);
+		}
+		
+		return list;
+	}
 
 	public List<Cidade> listarPorDdd(int ddd) throws SQLException{
 		PreparedStatement stmt = Conexao.getInstance().getConexao().prepareStatement(
@@ -69,10 +94,9 @@ public class CidadeDAO {
 		stmt.setInt(1, ddd);
 		ResultSet rs = stmt.executeQuery();
 		List<Cidade> list = new ArrayList<Cidade>();
-		System.out.println(ddd);
+
 		while(rs.next()){
 			Cidade e = new Cidade();
-			System.out.println("cidade");
 			
 			e.setId(rs.getInt("id"));
 			e.setNome(rs.getString("title"));

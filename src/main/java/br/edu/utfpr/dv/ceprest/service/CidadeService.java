@@ -28,7 +28,18 @@ public class CidadeService {
 			return null;
 		}
 	}
-	
+
+	@GET
+	@Path("/listar/{sigla}/populacao")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Cidade> listarPorPopulacao(@PathParam("sigla") String sigla) {
+		try {
+			return new CidadeDAO().listarPorEstadoPopulacao(sigla.toUpperCase());
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}	
 
 	@GET
 	@Path("/listar/ddd/{ddd}")

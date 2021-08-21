@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.edu.utfpr.dv.ceprest.model.Cidade;
+import br.edu.utfpr.dv.ceprest.model.PesquisaCidade;
 
 public class CidadeDAO {
 	
@@ -112,4 +113,32 @@ public class CidadeDAO {
 		return list;
 	}
 
+
+	public List<Cidade> pesquisa(PesquisaCidade pesquisa) throws SQLException{
+		PreparedStatement stmt = Conexao.getInstance().getConexao().prepareStatement(
+				"SELECT city.*, state.title AS stateTitle, state.letter " +
+				"FROM city INNER JOIN state ON state.id=city.id_state " +
+				"WHERE state.letter=? and city.population>=? ORDER BY city.population desc");
+
+		stmt.setString(1, pesquisa.getSigla());
+		stmt.setInt(2, pesquisa.getMinPopulacao());
+		ResultSet rs = stmt.executeQuery();
+		List<Cidade> list = new ArrayList<Cidade>();
+
+		while(rs.next()){
+			Cidade e = new Cidade();
+			
+			e.setId(rs.getInt("id"));
+			e.setNome(rs.getString("title"));
+			e.setDdd(rs.getInt("iso_ddd"));
+			e.setPopulacao(rs.getInt("population"));
+			e.getEstado().setId(rs.getInt("id_state"));
+			e.getEstado().setNome(rs.getString("stateTitle"));
+			e.getEstado().setSigla(rs.getString("letter"));
+			
+			list.add(e);
+		}
+		
+		return list;
+	}
 }

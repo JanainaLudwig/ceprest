@@ -6,6 +6,7 @@ import java.util.List;
 import br.edu.utfpr.dv.ceprest.dao.CidadeDAO;
 import br.edu.utfpr.dv.ceprest.model.Cidade;
 import br.edu.utfpr.dv.ceprest.model.Estado;
+import br.edu.utfpr.dv.ceprest.model.PesquisaCidade;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -72,6 +73,26 @@ public class CidadeService {
 	public List<Cidade> listarPorEstadoPost(Estado estado) {
 		try {
 			return new CidadeDAO().listarPorEstado(estado.getSigla());
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+
+	/**
+	 * Exemplo: 
+	 * curl -X POST -H "Content-type: application/json" -d "{\"sigla\": \"SC\", \"minPopulacao\": 100000}" http://localhost:8080/cidades/listar/pesquisa
+	 * @param pesquisa
+	 * @return
+	 */
+	@POST
+	@Path("/listar/pesquisa")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public List<Cidade> pesquisaCidade(PesquisaCidade pesquisa) {
+		try {
+			return new CidadeDAO().pesquisa(pesquisa);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
